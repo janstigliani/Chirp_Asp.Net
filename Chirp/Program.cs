@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Chirp
 {
     public class Program
@@ -7,6 +9,8 @@ namespace Chirp
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddDbContext<ChirpContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("postgress")));
 
             builder.Services.AddControllers();
 

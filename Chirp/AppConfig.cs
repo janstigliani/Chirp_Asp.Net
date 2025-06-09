@@ -11,7 +11,7 @@
             {
                 Configuration = new ConfigurationBuilder()
                     .SetBasePath(AppContext.BaseDirectory)
-                    .AddJsonFile("AppConfig.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .Build();
             }
         }
