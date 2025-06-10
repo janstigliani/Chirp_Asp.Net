@@ -22,7 +22,6 @@ namespace Chirp
 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
             app.Run();
