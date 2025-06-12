@@ -13,7 +13,7 @@ namespace Chirp.Services.Services.Model.ViewModels
 
         public DateTime CreationTime { get; set; }
 
-        public string Text { get; set; }
+        public required string Text { get; set; }
 
         public string? ExternalUrl { get; set; }
 

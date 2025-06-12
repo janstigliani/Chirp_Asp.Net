@@ -10,6 +10,9 @@ using Chirp.Model;
 using Chirp.Services.Services;
 using Chirp.Services.Services.Interfaces;
 using Chirp.Services.Services.Model.ViewModels;
+using Microsoft.Extensions.Logging;
+using Chirp.Services.Services.Model.Filter;
+using Chirp.Services.Services.Model.DTO;
 
 namespace Chirp.Controllers
 {
@@ -46,101 +49,90 @@ namespace Chirp.Controllers
             }
         }
 
-        //// GET: api/Chirps
-        //[HttpGet("all")]
-        //public async Task<ActionResult<IEnumerable<Chirps>>> GetAllChirps()
-        //{
-        //    _logger.LogInformation("ChirpsController.GetAllChirps called");
+        // GET: api/Chirps
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllChirps()
+        {
+            _logger.LogInformation("ChirpsController.GetAllChirps called");
 
-        //    var chirps = await _chirpsService.GetAllChirps();
+            var chirps = await _chirpsService.GetAllChirps();
 
-        //    if (chirps == null || !chirps.Any())
-        //    {
-        //        _logger.LogInformation("No chirps found in database");
-        //        return NoContent();
-        //    }
+            if (chirps == null || !chirps.Any())
+            {
+                _logger.LogInformation("No chirps found in database");
+                return NoContent();
+            }
 
-        //    _logger.LogInformation("Returning {Count} chirps", chirps.Count);
-        //    return Ok(chirps);
-        //    return await _context.Chirps.ToListAsync();
-        //}
+            _logger.LogInformation("Returning {Count} chirps", chirps.Count);
+            return Ok(chirps);
+        }
 
-        //// GET: api/Chirps/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Chirps>> GetChirps([FromRoute] int id)
-        //{
-        //    var chirps = await _context.Chirps.FindAsync(id);
+        // GET: api/Chirps/5
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetChirpsById([FromRoute] int id)
+        {
+            _logger.LogInformation("ChirpsController.GetChirpsById called");
 
-        //    if (chirps == null)
-        //    {
-        //        return NotFound();
-        //    }
+            var chirps = await _chirpsService.GetChirpsById(id);
 
-        //    return chirps;
-        //}
+            if (chirps == null)
+            {
+                _logger.LogInformation("No chirps found in database");
+                return NoContent();
+            }
 
-        //// PUT: api/Chirps/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutChirps([FromRoute] int id, [FromBody] Chirps chirps)
-        //{
-        //    if (id != chirps.ChirpsId)
-        //    {
-        //        return BadRequest();
-        //    }
+            _logger.LogInformation("Returning chirp result");
+            return Ok(chirps);
+        }
 
-        //    _context.Entry(chirps).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!ChirpsExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
+        // PUT: api/Chirps/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutChirps([FromRoute] int id, [FromBody] Chirps_DTO_Update chirps)
+        {
+            var result = await _chirpsService.UpdateChirps(id, chirps);
+            if (!result)
+            {
+                _logger.LogWarning("Failed to update chirp with ID {Id}", id);
+                return NotFound();
+            }
+            _logger.LogInformation("Successfully updated chirp with ID {Id}", id);
+            return NoContent();
+        }
 
 
-        //// POST: api/Chirps
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPost]
-        //public async Task<ActionResult<Chirps>> PostChirps([FromBody] Chirps chirps)
-        //{
-        //    _context.Chirps.Add(chirps);
-        //    await _context.SaveChangesAsync();
+        // POST: api/Chirps
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<IActionResult> PostChirps([FromBody] Chirps_DTO chirps)
+        {
+           var result = await _chirpsService.PostChirps(chirps);
+            if (result == null)
+            {
+                _logger.LogWarning("Failed to create chirp");
+                return BadRequest("Failed to create chirp");
+            }
+            _logger.LogInformation("Successfully created chirp with ID {Id}", result);
+            return CreatedAtAction("GetChirpsById", new { id = result }, result);
+        }
 
-        //    return CreatedAtAction("GetChirps", new { id = chirps.ChirpsId }, chirps);
-        //}
-
-        //// DELETE: api/Chirps/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteChirps([FromRoute] int id)
-        //{
-        //    var chirps = await _context.Chirps.FindAsync(id);
-        //    if (chirps == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.Chirps.Remove(chirps);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-
-        //private bool ChirpsExists(int id)
-        //{
-        //    return _context.Chirps.Any(e => e.ChirpsId == id);
-        //}
+        // delete: api/chirps/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> deletechirps([FromRoute] int id)
+        {
+            var result = await _chirpsService.DeleteChirps(id);
+            if (result == null)
+            {
+                _logger.LogWarning("Failed to delete chirp with ID {Id}", id);
+                return NotFound();
+            }
+            if (result == -1)
+            {
+                _logger.LogWarning("Warning, first you have to eliminate all associates comments of Chirps with ID:{id}", id);
+                return BadRequest();
+            }
+            _logger.LogInformation("Successfully deleted chirp with ID {Id}", id);
+            return NoContent();
+        }
     }
 }
