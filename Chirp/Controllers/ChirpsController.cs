@@ -90,6 +90,7 @@ namespace Chirp.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutChirps([FromRoute] int id, [FromBody] Chirps_DTO_Update chirps)
         {
+            _logger.LogInformation("ChirpsController.UpdateChirps called");
             var result = await _chirpsService.UpdateChirps(id, chirps);
             if (!result)
             {
@@ -106,20 +107,22 @@ namespace Chirp.Controllers
         [HttpPost]
         public async Task<IActionResult> PostChirps([FromBody] Chirps_DTO chirps)
         {
-           var result = await _chirpsService.PostChirps(chirps);
+            _logger.LogInformation("ChirpsController.PostChirps called");
+            var result = await _chirpsService.PostChirps(chirps);
             if (result == null)
             {
                 _logger.LogWarning("Failed to create chirp");
                 return BadRequest("Failed to create chirp");
             }
             _logger.LogInformation("Successfully created chirp with ID {Id}", result);
-            return CreatedAtAction("GetChirpsById", new { id = result }, result);
+            return CreatedAtAction("GetChirpsById", new { id = result }, chirps);
         }
 
         // delete: api/chirps/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> deletechirps([FromRoute] int id)
         {
+            _logger.LogInformation("ChirpsController.DeleteChirps called");
             var result = await _chirpsService.DeleteChirps(id);
             if (result == null)
             {
