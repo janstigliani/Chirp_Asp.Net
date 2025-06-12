@@ -15,6 +15,8 @@ namespace Chirp
                                 .ReadFrom.Configuration(builder.Configuration)
                                 .CreateLogger();
 
+            builder.Host.UseSerilog();
+
             // Add services to the container.
             builder.Services.AddDbContext<ChirpContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
