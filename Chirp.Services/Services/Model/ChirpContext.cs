@@ -22,7 +22,7 @@ public partial class ChirpContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(AppConfig.GetConnectionString());
+        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=Chirp;Username=postgres;Password=superpippo;");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
