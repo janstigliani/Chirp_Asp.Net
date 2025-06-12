@@ -119,7 +119,7 @@ namespace Chirp.Services.Services
 
             var entity = new Chirps
             {
-                CreationTime = DateTime.UtcNow,
+                CreationTime = DateTime.Now,
                 Text = chirps.Text,
                 ExternalUrl = chirps.ExternalUrl,
                 Lat = chirps.Lat,

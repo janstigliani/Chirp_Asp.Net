@@ -1,6 +1,8 @@
 using Chirp.Services.Services;
 using Chirp.Services.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 namespace Chirp
@@ -16,6 +18,16 @@ namespace Chirp
                                 .CreateLogger();
 
             builder.Host.UseSerilog();
+
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v3", new OpenApiInfo
+                {
+                    Title = "Chirp API",
+                    Version = "v1",
+                    Description = "API for Chirp application",
+                });
+            });
 
             // Add services to the container.
             builder.Services.AddDbContext<ChirpContext>(options =>
@@ -34,6 +46,15 @@ namespace Chirp
             //});
 
             var app = builder.Build();
+
+            app.UseSwagger(c =>
+            {
+                c.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
+            });
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("v3/swagger.json", "Chirp API V1");
+            });
 
             // Configure the HTTP request pipeline.
 
