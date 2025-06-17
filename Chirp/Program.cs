@@ -37,6 +37,8 @@ namespace Chirp
 
             builder.Services.AddScoped<IChirpsService, JanChirpsService>();
 
+            builder.Services.AddScoped<ICommentService, JanCommentService>();
+
             //builder.Services.AddCors(options =>
             //{
             //    options.AddPolicy("AllowAllOrigins",

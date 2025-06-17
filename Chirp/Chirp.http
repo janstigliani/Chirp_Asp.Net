@@ -1,4 +1,7 @@
-@Chirp_HostAddress = http://localhost:5090
+@Chirp_HostAddress = http://
+
+
+:5090
 
 GET {{Chirp_HostAddress}}/api/chirps
 Accept: application/json

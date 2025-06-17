@@ -98,7 +98,7 @@ namespace Chirp.Controllers
                 return NotFound();
             }
             _logger.LogInformation("Successfully updated chirp with ID {Id}", id);
-            return NoContent();
+            return Ok();
         }
 
 
